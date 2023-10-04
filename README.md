@@ -1,6 +1,14 @@
                                               MOVIE RECOMMENDATION SYSTEM
 
-This project recommends top 5 movies which are similar to the movie given by the user.It is an example of Reinforcement Learning where it learns based on the previous recommendations and improve itself on the future recommendations.I have also created a website using Streamlit module ehich provides an interface for the user to input the movie to get the recommended movies.
+**Project Overview:**
+
+This project specializes in recommending the top 5 movies similar to the one provided by the user. It employs Reinforcement Learning, leveraging past recommendations to enhance future suggestions. Additionally, a user-friendly interface has been developed using the Streamlit module, allowing users to input a movie and receive personalized recommendations.
+
+**Key Features:**
+
+1. **Reinforcement Learning Integration:** The recommendation system employs Reinforcement Learning algorithms, learning from previous recommendations to continually improve the accuracy and relevance of suggestions.
+
+2. **User Interface with Streamlit:** The project includes a streamlined website created using the Streamlit module. Users can easily input their preferred movie, initiating the recommendation process seamlessly.
 
 # SCREENSHOTS
 ![ss1](https://github.com/tushar151/Movie-Recommendation-System/assets/104630257/cf034998-972b-4adb-8fd0-e3fa67f65f49)
