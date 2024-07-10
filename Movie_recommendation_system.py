@@ -31,13 +31,24 @@ def recommend(movie):
     return recommended_movies, recommended_movies_posters
 
 
-# Load pickle files from Google Drive URLs
+# Load pickle files directly from URLs
 movies_url = 'https://drive.google.com/uc?id=11KDraKlbKyd72m6qA4a1wlcgX8mEZWta'
 similarity_url = 'https://drive.google.com/uc?id=1iSpaZ9E4_gcr28Bgq2cLaoYVcu6leMXc'
 
-movies_dict = pickle.load(requests.get(movies_url, stream=True).raw)
-movies = pd.DataFrame(movies_dict)
-similarity = pickle.load(requests.get(similarity_url, stream=True).raw)
+# Fetching movies_dict
+response = requests.get(movies_url)
+if response.status_code == 200:
+    movies_dict = pickle.loads(response.content)
+    movies = pd.DataFrame(movies_dict)
+else:
+    st.write("Failed to fetch movie data.")
+
+# Fetching similarity
+response = requests.get(similarity_url)
+if response.status_code == 200:
+    similarity = pickle.loads(response.content)
+else:
+    st.write("Failed to fetch similarity data.")
 
 # Streamlit app
 st.title('Movie Recommender System')
