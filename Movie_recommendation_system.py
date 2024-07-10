@@ -5,14 +5,13 @@ import requests
 
 
 def fetch_poster(movie_id):
-    response=requests.get(
-        'https://api.themoviedb.org/3/movie/{}?api_key=46ba99765bd9c8730449453dd57eb929&language=en-US%27'.format(
-            movie_id))
+    response = requests.get(
+        f'https://api.themoviedb.org/3/movie/{movie_id}?api_key=46ba99765bd9c8730449453dd57eb929&language=en-US')
     data = response.json()
-
-
-
-    return "https://image.tmdb.org/t/p/w500/" + data['poster_path']
+    if 'poster_path' in data and data['poster_path']:
+        return "https://image.tmdb.org/t/p/w500/" + data['poster_path']
+    else:
+        return None
 
 
 def recommend(movie):
@@ -24,35 +23,49 @@ def recommend(movie):
 
     for i in movies_list:
         movie_id = movies.iloc[i[0]].movie_id
-        # fetch poster from api
-
-        recommended_movies.append(movies.iloc[i[0]].title)
-        recommended_movies_posters.append(fetch_poster(movie_id))
+        poster_url = fetch_poster(movie_id)
+        if poster_url:
+            recommended_movies.append(movies.iloc[i[0]].title)
+            recommended_movies_posters.append(poster_url)
+    
     return recommended_movies, recommended_movies_posters
 
 
-movies_dict = pickle.load(open('https://drive.google.com/file/d/11KDraKlbKyd72m6qA4a1wlcgX8mEZWta/view?usp=sharing', 'rb'))
+# Load pickle files from Google Drive URLs
+movies_url = 'https://drive.google.com/uc?id=11KDraKlbKyd72m6qA4a1wlcgX8mEZWta'
+similarity_url = 'https://drive.google.com/uc?id=1iSpaZ9E4_gcr28Bgq2cLaoYVcu6leMXc'
+
+movies_dict = pickle.load(requests.get(movies_url, stream=True).raw)
 movies = pd.DataFrame(movies_dict)
-similarity = pickle.load(open('https://drive.google.com/file/d/1iSpaZ9E4_gcr28Bgq2cLaoYVcu6leMXc/view?usp=sharing', 'rb'))
+similarity = pickle.load(requests.get(similarity_url, stream=True).raw)
+
+# Streamlit app
 st.title('Movie Recommender System')
-selected_movie_name = st.selectbox('What movie do you want to search?',movies['title'].values)
+selected_movie_name = st.selectbox('What movie do you want to search?', movies['title'].values)
 
 if st.button("RECOMMEND"):
-
     names, posters = recommend(selected_movie_name)
-    col1, col2, col3, col4, col5 = st.columns(5)
-    with col1:
-        st.text(names[0])
-        st.image(posters[0])
-    with col2:
-        st.text(names[1])
-        st.image(posters[1])
-    with col3:
-        st.text(names[2])
-        st.image(posters[2])
-    with col4:
-        st.text(names[3])
-        st.image(posters[3])
-    with col5:
-        st.text(names[4])
-        st.image(posters[4])
+    if names and posters:
+        col1, col2, col3, col4, col5 = st.columns(5)
+        with col1:
+            if len(names) > 0:
+                st.text(names[0])
+                st.image(posters[0])
+        with col2:
+            if len(names) > 1:
+                st.text(names[1])
+                st.image(posters[1])
+        with col3:
+            if len(names) > 2:
+                st.text(names[2])
+                st.image(posters[2])
+        with col4:
+            if len(names) > 3:
+                st.text(names[3])
+                st.image(posters[3])
+        with col5:
+            if len(names) > 4:
+                st.text(names[4])
+                st.image(posters[4])
+    else:
+        st.write("No recommendations found.")
